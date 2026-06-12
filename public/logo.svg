@@ -1,0 +1,12 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="8" fill="url(#logo-gradient)"/>
+  <path d="M10 12C10 10.8954 10.8954 10 12 10H14.5C17.5376 10 20 12.4624 20 15.5C20 18.5376 17.5376 21 14.5 21H12C10.8954 21 10 20.1046 10 19V12Z" fill="white" fill-opacity="0.9"/>
+  <path d="M20 15.5C20 12.4624 22.4624 10 25.5 10H26C27.1046 10 28 10.8954 28 12V19C28 20.1046 27.1046 21 26 21H25.5C22.4624 21 20 18.5376 20 15.5Z" fill="white" fill-opacity="0.5"/>
+  <circle cx="14.5" cy="15.5" r="2" fill="#3B82F6"/>
+  <defs>
+    <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+</svg>
