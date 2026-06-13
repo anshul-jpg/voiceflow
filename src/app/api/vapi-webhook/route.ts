@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     // Filter for Tool Call triggers
     if (payload.message?.type === "tool-calls") {
       const toolCall = payload.message.toolCallList[0];
-      const { name: functionName, id: toolCallId, arguments: args } = toolCall;
+      const { name: functionName, id: toolCallId, parameters: args } = toolCall;
 
       let runtimeExecutionResult = "";
 
