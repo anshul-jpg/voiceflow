@@ -19,7 +19,7 @@ const industries: IndustryData[] = [
   {
     title: "Dental Clinics",
     description: "Reduce front desk workload while capturing every new patient inquiry.",
-    imageUrl: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=600&auto=format&fit=crop",
+    imageUrl: "/images/dental.png",
     benefits: [
       "Reduce no-shows with SMS reminders",
       "Capture after-hours patients",
@@ -29,7 +29,7 @@ const industries: IndustryData[] = [
   {
     title: "Cosmetic Clinics",
     description: "Handle high-value consultation requests with a premium, professional experience.",
-    imageUrl: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600&auto=format&fit=crop",
+    imageUrl: "/images/cosmetic.png",
     benefits: [
       "Qualify treatment interest",
       "Book consultation slots",
@@ -39,7 +39,7 @@ const industries: IndustryData[] = [
   {
     title: "Law Firms",
     description: "Screen intake calls and collect case details before attorney follow-up.",
-    imageUrl: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop",
+    imageUrl: "/images/legal.png",
     benefits: [
       "Pre-qualify potential clients",
       "Capture case details accurately",
@@ -49,7 +49,7 @@ const industries: IndustryData[] = [
   {
     title: "Real Estate",
     description: "Qualify buyers and sellers and schedule property viewings around the clock.",
-    imageUrl: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=600&auto=format&fit=crop",
+    imageUrl: "/images/realestate.png",
     benefits: [
       "Capture lead intent instantly",
       "Schedule property viewings",
@@ -59,7 +59,7 @@ const industries: IndustryData[] = [
   {
     title: "Home Services",
     description: "Book service calls and dispatch technicians without tying up your team.",
-    imageUrl: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=600&auto=format&fit=crop",
+    imageUrl: "/images/homeservices.png",
     benefits: [
       "Book service appointments",
       "Capture job details",
