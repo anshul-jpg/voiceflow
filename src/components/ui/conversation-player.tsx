@@ -171,12 +171,15 @@ export function ConversationPlayer({
                 opacity: isActive || isHovered ? 1 : position.opacity,
               }}
             >
-              {/* Glowing halo behind active node (Monochrome white/gray) */}
+              {/* Glowing halo behind active node (Dynamic gradient) */}
               {isActive && (
-                <div className="absolute -inset-2.5 rounded-full bg-white/5 border border-white/10 animate-pulse pointer-events-none" />
+                <div 
+                  className="absolute -inset-2.5 rounded-full bg-gradient-gemini opacity-15 border animate-pulse pointer-events-none" 
+                  style={{ borderColor: "var(--accent-border)" }}
+                />
               )}
 
-              {/* Node Button (Larger sizing, white active, dark inactive) */}
+              {/* Node Button (Larger sizing, white active, dark inactive with dynamic glow) */}
               <button
                 onClick={() => onSelectDemoId?.(node.id)}
                 onMouseEnter={() => setHoveredNodeId(node.id)}
@@ -184,20 +187,27 @@ export function ConversationPlayer({
                 className={cn(
                   "w-13 h-13 md:w-16 md:h-16 rounded-full flex items-center justify-center border transition-all duration-300 cursor-none relative",
                   isActive
-                    ? "bg-white border-white text-black shadow-lg shadow-white/15 scale-115"
-                    : "bg-[#141414] border-white/10 text-white/50 hover:border-white hover:text-white hover:scale-105"
+                    ? "bg-white text-black scale-115"
+                    : "bg-[#141414] text-white/50 hover:text-white hover:scale-105"
                 )}
+                style={{
+                  borderColor: isActive ? "var(--accent-color-1)" : isHovered ? "var(--accent-color-3)" : "rgba(254,254,254,0.1)",
+                  boxShadow: isActive ? "0 10px 20px -3px rgba(var(--accent-color-1-rgb), 0.3)" : "none",
+                }}
                 title={node.title}
               >
                 <Icon className="w-5 h-5 md:w-6 md:h-6" />
               </button>
 
-              {/* Label floating underneath node (Monochrome white/gray) */}
+              {/* Label floating underneath node (Dynamic when active) */}
               <div
                 className={cn(
-                  "absolute top-14 md:top-18 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-wider whitespace-nowrap transition-colors pointer-events-none",
-                  isActive ? "text-white" : "text-white/40"
+                  "absolute top-14 md:top-18 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-wider whitespace-nowrap transition-colors pointer-events-none"
                 )}
+                style={{
+                  color: isActive ? "var(--accent-color-1)" : "rgba(254,254,254,0.4)",
+                  fontWeight: isActive ? 900 : 700
+                }}
               >
                 {node.title.split(" ")[0]}
               </div>
