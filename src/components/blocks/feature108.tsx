@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
-import { Mic, Calendar, BarChart3, Zap } from "lucide-react";
+import { Mic, Calendar, Zap, Clock, UserCheck, Phone } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/Badge";
 
@@ -23,9 +23,9 @@ interface FeatureTab {
 
 const tabs: FeatureTab[] = [
   {
-    value: "voice",
-    icon: <Mic className="h-4 w-4 shrink-0" />,
-    label: "Voice AI",
+    value: "receptionist",
+    icon: <Phone className="h-4 w-4 shrink-0" />,
+    label: "AI Receptionist",
     content: {
       badge: "Core Technology",
       title: "Conversations that sound completely human.",
@@ -33,47 +33,65 @@ const tabs: FeatureTab[] = [
         "Our AI voice agents handle complex multi-turn conversations with natural pacing, emotional awareness, and industry-specific vocabulary — callers rarely know they're speaking to an AI.",
       bulletPoints: [
         "Sub-200ms response latency",
-        "40+ supported languages",
+        "Natural, context-aware dialogue",
         "Custom voice cloning available",
         "Live call transcription & tagging",
       ],
-      icon: <Mic className="h-10 w-10" />,
+      icon: <Phone className="h-10 w-10" />,
     },
   },
   {
-    value: "scheduling",
+    value: "availability",
+    icon: <Clock className="h-4 w-4 shrink-0" />,
+    label: "24/7 Answering",
+    content: {
+      badge: "Availability",
+      title: "Always on, day or night.",
+      description:
+        "Every call is answered instantly — nights, weekends, and holidays included. No voicemails, no hold times, just instant responses.",
+      bulletPoints: [
+        "100% answer rate",
+        "Simultaneous call handling (no busy signals)",
+        "After-hours and holiday coverage",
+        "Zero wait times for callers",
+      ],
+      icon: <Clock className="h-10 w-10" />,
+    },
+  },
+  {
+    value: "booking",
     icon: <Calendar className="h-4 w-4 shrink-0" />,
-    label: "Scheduling",
+    label: "Booking",
     content: {
       badge: "Automation",
       title: "Book, reschedule, cancel — without human touch.",
       description:
         "Real-time calendar sync means every appointment is confirmed during the call. SMS reminders, waitlist management, and conflict detection all happen automatically.",
       bulletPoints: [
-        "Integrates with Google Calendar, Calendly, Dentrix",
+        "Integrates with Google Calendar, Calendly, CRM",
         "Automated SMS & email confirmations",
-        "Smart waitlist with auto-fill",
-        "Recurring appointment series support",
+        "Smart waitlists & rescheduling",
+        "Real-time slot availability checks",
       ],
       icon: <Calendar className="h-10 w-10" />,
     },
   },
   {
-    value: "analytics",
-    icon: <BarChart3 className="h-4 w-4 shrink-0" />,
-    label: "Analytics",
+    value: "qualification",
+    icon: <UserCheck className="h-4 w-4 shrink-0" />,
+    label: "Lead Qualification",
     content: {
-      badge: "Insights",
-      title: "Every call surfaces actionable intelligence.",
+      badge: "Sales Automation",
+      title: "Qualify leads before they reach your team.",
       description:
-        "Turn your call volume into a competitive advantage. Track call outcomes, lead quality scores, missed-revenue attribution, and agent performance in a single dashboard.",
+        "Filter out spam and capture caller intent, budget, timeline, and contact info. Automatically prioritize and log high-value leads.",
       bulletPoints: [
-        "Real-time call outcome scoring",
-        "Missed-revenue attribution reports",
-        "Custom KPI dashboards",
-        "Weekly AI-generated business briefs",
+        "Intent and budget qualification",
+        "Instant high-value lead routing",
+        "Zero-friction customer screening",
+        "Immediate team notifications via SMS/Email",
       ],
-      icon: <BarChart3 className="h-10 w-10" />,
+      icon: <UserCheck className="h-10 w-10" />,
     },
   },
   {
@@ -82,7 +100,7 @@ const tabs: FeatureTab[] = [
     label: "Integrations",
     content: {
       badge: "Ecosystem",
-      title: "Plugs into the tools your team already uses.",
+      title: "Plugs into the tools you already use.",
       description:
         "Voxora connects to your CRM, practice management software, and communication stack in days — not months. No engineering lift required.",
       bulletPoints: [

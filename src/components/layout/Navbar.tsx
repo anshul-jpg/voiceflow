@@ -16,7 +16,6 @@ import Link from "next/link";
 const NAV_ITEMS = [
   { name: "Home", url: "#", icon: Home },
   { name: "Features", url: "#features", icon: Zap },
-  { name: "How It Works", url: "#how-it-works", icon: BarChart3 },
   { name: "Pricing", url: "#pricing", icon: DollarSign },
   { name: "Demo", url: "#demo", icon: Play },
   { name: "Contact", url: "#contact", icon: Mail },

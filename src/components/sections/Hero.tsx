@@ -13,7 +13,7 @@ import { HERO_STATS } from "@/lib/constants";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-32">
+    <section className="relative overflow-hidden pt-20 pb-20 sm:pt-32 md:pt-40 md:pb-32">
       <BackgroundPaths />
       <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
         <div className="grid items-center gap-16 lg:grid-cols-2">
@@ -36,14 +36,14 @@ export function Hero() {
               and support customers 24/7.
             </p>
 
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-              <Link href="#contact" className="inline-block">
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+              <Link href="#contact">
                 <NeonButton variant="solid" size="lg" data-magnetic>
                   Book Demo
                 </NeonButton>
               </Link>
-              <Link href="#demo" className="inline-block">
-                <NeonButton variant="ghost" size="lg" data-magnetic className="flex items-center gap-2">
+              <Link href="#demo">
+                <NeonButton variant="ghost" size="lg" data-magnetic className="flex items-center justify-center gap-2">
                   <Play className="h-4 w-4 fill-current" />
                   Watch Live Demo
                 </NeonButton>
