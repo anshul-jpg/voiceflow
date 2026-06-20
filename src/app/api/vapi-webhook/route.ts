@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
+import { rateLimit } from "@/lib/rate-limit";
 
-const generateTrackingCode = (prefix = "APX-", length = 3) => {
+const generateTrackingCode = (prefix = "APX-", length = 8) => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let result = prefix;
   for (let i = 0; i < length; i++) {
@@ -12,6 +13,29 @@ const generateTrackingCode = (prefix = "APX-", length = 3) => {
 
 export async function POST(request: Request) {
   try {
+    // 🛡️ RATE LIMITING: 20 webhook requests per 1 minute
+    const limiter = rateLimit(request, { limit: 20, windowMs: 60 * 1000 });
+    if (!limiter.success) {
+      return NextResponse.json(
+        { error: "Too many requests" },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(limiter.reset),
+          },
+        }
+      );
+    }
+
+    // Optional Webhook Secret Verification (if configured in environment)
+    const webhookSecret = process.env.VAPI_WEBHOOK_SECRET;
+    if (webhookSecret) {
+      const authHeader = request.headers.get("x-vapi-secret");
+      if (authHeader !== webhookSecret) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+    }
+
     const payload = await request.json();
     console.log("🚀 Incoming Webhook Event Type:", payload.message?.type);
 

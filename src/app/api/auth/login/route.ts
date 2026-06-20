@@ -3,9 +3,25 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/auth";
+import { LoginSchema } from "@/lib/validation";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   try {
+    // 🛡️ RATE LIMITING: 5 login requests per 1 minute
+    const limiter = rateLimit(req, { limit: 5, windowMs: 60 * 1000 });
+    if (!limiter.success) {
+      return NextResponse.json(
+        { message: `Too many login attempts. Please try again in ${limiter.reset} seconds.` },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(limiter.reset),
+          },
+        }
+      );
+    }
+
     await connectDB();
 
     // ✅ SAFE JSON PARSE
@@ -19,15 +35,16 @@ export async function POST(req: Request) {
       );
     }
 
-    const { email, password } = body || {};
-
-    // ✅ VALIDATION
-    if (!email || !password) {
+    // ✅ VALIDATION WITH ZOD
+    const validation = LoginSchema.safeParse(body);
+    if (!validation.success) {
       return NextResponse.json(
-        { message: "Email and password required" },
+        { message: validation.error.issues[0].message, errors: validation.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
+
+    const { email, password } = validation.data;
 
     // ✅ FIND USER
     const user = await User.findOne({ email });
@@ -59,7 +76,7 @@ export async function POST(req: Request) {
       httpOnly: true,
       path: "/",
       sameSite: "lax",
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7,
     });
 
