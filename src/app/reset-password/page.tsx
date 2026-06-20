@@ -60,46 +60,33 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div style={{ width: "100%", maxWidth: "440px", position: "relative" }}>
+    <div className="w-full max-w-[440px] relative">
       {/* Logo */}
-      <div style={{ textAlign: "center", marginBottom: "40px" }}>
-        <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+      <div className="text-center mb-8 sm:mb-10">
+        <Link href="/" className="inline-flex items-center gap-2.5 no-underline">
           <Image src="/logo.svg" alt="Voxora" width={28} height={28} />
-          <span style={{ fontSize: "20px", fontWeight: 600, color: "var(--foreground)" }}>Voxora</span>
+          <span className="text-xl font-semibold text-foreground">Voxora</span>
         </Link>
       </div>
 
       {/* Card */}
-      <div style={{
-        background: "var(--card)",
-        border: "1px solid var(--border)",
-        borderRadius: "16px",
-        padding: "40px",
-      }}>
-        <h1 style={{ fontSize: "24px", fontWeight: 700, color: "var(--foreground)", margin: "0 0 8px" }}>
+      <div className="bg-card border border-border rounded-2xl p-6 sm:p-10 shadow-xl">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
           Choose new password
         </h1>
-        <p style={{ fontSize: "14px", color: "var(--muted-foreground)", margin: "0 0 32px" }}>
+        <p className="text-xs sm:text-sm text-muted-foreground mb-8">
           Please enter your new password below.
         </p>
 
         {!token ? (
-          <div style={{
-            background: "rgba(255,100,103,0.08)",
-            border: "1px solid rgba(255,100,103,0.25)",
-            borderRadius: "8px",
-            padding: "14px",
-            fontSize: "13px",
-            color: "var(--destructive)",
-            textAlign: "center",
-          }}>
+          <div className="bg-destructive/10 border border-destructive/25 rounded-lg p-4 text-[13px] text-destructive text-center">
             Missing or invalid reset token. Please request a new password reset link.
           </div>
         ) : (
-          <form onSubmit={handleResetPassword} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <form onSubmit={handleResetPassword} className="flex flex-col gap-5">
             {/* New Password */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <label style={{ fontSize: "13px", fontWeight: 500, color: "var(--foreground)" }}>
+            <div className="flex flex-col gap-2">
+              <label className="text-[13px] font-medium text-foreground">
                 New Password
               </label>
               <input
@@ -108,25 +95,13 @@ function ResetPasswordForm() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{
-                  background: "var(--muted)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "8px",
-                  padding: "12px 16px",
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                  fontFamily: "var(--font-sans)",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "var(--ring)")}
-                onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
+                className="bg-muted border border-border rounded-lg px-4 py-3 text-foreground text-sm outline-none transition-colors duration-200 focus:border-ring font-sans w-full"
               />
             </div>
 
             {/* Confirm Password */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <label style={{ fontSize: "13px", fontWeight: 500, color: "var(--foreground)" }}>
+            <div className="flex flex-col gap-2">
+              <label className="text-[13px] font-medium text-foreground">
                 Confirm New Password
               </label>
               <input
@@ -135,46 +110,20 @@ function ResetPasswordForm() {
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                style={{
-                  background: "var(--muted)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "8px",
-                  padding: "12px 16px",
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                  fontFamily: "var(--font-sans)",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "var(--ring)")}
-                onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
+                className="bg-muted border border-border rounded-lg px-4 py-3 text-foreground text-sm outline-none transition-colors duration-200 focus:border-ring font-sans w-full"
               />
             </div>
 
             {/* Error Info */}
             {error && (
-              <div style={{
-                background: "rgba(255,100,103,0.08)",
-                border: "1px solid rgba(255,100,103,0.25)",
-                borderRadius: "8px",
-                padding: "10px 14px",
-                fontSize: "13px",
-                color: "var(--destructive)",
-              }}>
+              <div className="bg-destructive/10 border border-destructive/25 rounded-lg px-3.5 py-2.5 text-[13px] text-destructive">
                 {error}
               </div>
             )}
 
             {/* Success Info */}
             {success && (
-              <div style={{
-                background: "rgba(34,197,94,0.08)",
-                border: "1px solid rgba(34,197,94,0.25)",
-                borderRadius: "8px",
-                padding: "10px 14px",
-                fontSize: "13px",
-                color: "#22c55e",
-              }}>
+              <div className="bg-emerald-500/10 border border-emerald-500/25 rounded-lg px-3.5 py-2.5 text-[13px] text-emerald-400">
                 Password successfully updated! Redirecting to login page…
               </div>
             )}
@@ -184,19 +133,11 @@ function ResetPasswordForm() {
               id="reset-submit"
               type="submit"
               disabled={loading || success}
-              style={{
-                background: loading || success ? "var(--muted)" : "var(--foreground)",
-                color: loading || success ? "var(--muted-foreground)" : "var(--background)",
-                border: "none",
-                borderRadius: "8px",
-                padding: "13px 24px",
-                fontSize: "14px",
-                fontWeight: 600,
-                cursor: loading || success ? "not-allowed" : "pointer",
-                transition: "opacity 0.2s",
-                fontFamily: "var(--font-sans)",
-                letterSpacing: "0.01em",
-              }}
+              className={`border-none rounded-lg px-6 py-3.5 text-sm font-semibold cursor-pointer transition-opacity duration-200 font-sans tracking-wide ${
+                loading || success
+                  ? "bg-muted text-muted-foreground cursor-not-allowed"
+                  : "bg-foreground text-background hover:opacity-90"
+              }`}
             >
               {loading ? "Updating password…" : "Reset Password"}
             </button>
@@ -205,14 +146,9 @@ function ResetPasswordForm() {
       </div>
 
       {/* Footer link */}
-      <p style={{
-        textAlign: "center",
-        marginTop: "24px",
-        fontSize: "14px",
-        color: "var(--muted-foreground)",
-      }}>
+      <p className="text-center mt-6 text-sm text-muted-foreground">
         Back to{" "}
-        <Link href="/login" style={{ color: "var(--foreground)", fontWeight: 500, textDecoration: "none" }}>
+        <Link href="/login" className="text-foreground font-medium no-underline hover:underline">
           Sign in
         </Link>
       </p>
@@ -223,24 +159,11 @@ function ResetPasswordForm() {
 export default function ResetPassword() {
   return (
     <MagneticCursor magneticFactor={0.3} cursorSize={28} blendMode="exclusion">
-      <div style={{
-        minHeight: "100vh",
-        background: "var(--background)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
-        fontFamily: "var(--font-sans)",
-      }}>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-x-hidden">
         {/* Background glow */}
-        <div style={{
-          position: "fixed",
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: "radial-gradient(ellipse 60% 50% at 50% -10%, rgba(115,115,115,0.12) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }} />
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,rgba(115,115,115,0.12)_0%,transparent_70%)] pointer-events-none" />
         <Suspense fallback={
-          <div style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>
+          <div className="text-muted-foreground text-sm">
             Loading password reset form…
           </div>
         }>

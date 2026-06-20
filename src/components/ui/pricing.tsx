@@ -45,7 +45,7 @@ export function Pricing({
     const cardContent = (
       <div
         className={cn(
-          "relative flex flex-col rounded-2xl p-8 transition-all duration-300 h-full text-left",
+          "relative flex flex-col rounded-2xl p-6 sm:p-8 transition-all duration-300 h-full text-left",
           plan.isPopular
             ? "bg-[#fefefe] text-[#0a0a0a]"
             : "bg-[#191919] text-[#fefefe]"

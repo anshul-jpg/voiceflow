@@ -38,7 +38,7 @@ export default function PricingPage() {
 
         {/* Pricing Content */}
         <main className="relative z-10 pt-24 pb-16 w-full max-w-full overflow-x-hidden flex-grow flex flex-col items-center justify-center">
-          <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="w-full max-w-7xl">
             <Pricing />
           </div>
         </main>

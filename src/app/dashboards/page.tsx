@@ -85,74 +85,37 @@ function BarChart({ data }: { data: { label: string; count: number }[] }) {
   const max = Math.max(...data.map((d) => d.count), 1);
 
   return (
-    <div style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "flex-end",
-      height: "150px",
-      paddingTop: "24px",
-      gap: "12px",
-    }}>
+    <div className="flex justify-between items-end h-[150px] pt-6 gap-2 sm:gap-3">
       {data.map((d) => {
         const barHeightPct = (d.count / max) * 100;
         return (
           <div
             key={d.label}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              flex: 1,
-              position: "relative",
-            }}
+            className="flex flex-col items-center flex-grow flex-shrink basis-0 relative"
           >
             {/* Bar Track & Fill Container */}
-            <div style={{
-              width: "100%",
-              maxWidth: "32px",
-              height: "140px",
-              position: "relative",
-              background: "var(--muted)",
-              borderRadius: "6px",
-              display: "flex",
-              alignItems: "flex-end",
-            }}>
+            <div className="w-full max-w-[32px] h-[140px] relative bg-muted rounded-md flex items-end">
               {/* Count Label */}
               {d.count > 0 && (
-                <span style={{
-                  position: "absolute",
-                  bottom: `calc(${barHeightPct}% + 6px)`,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  color: "var(--foreground)",
-                  fontFamily: "var(--font-sans)",
-                  whiteSpace: "nowrap",
-                }}>
+                <span 
+                  className="absolute left-1/2 -translate-x-1/2 text-[11px] font-semibold text-foreground font-sans whitespace-nowrap"
+                  style={{ bottom: `calc(${barHeightPct}% + 6px)` }}
+                >
                   {d.count}
                 </span>
               )}
 
               {/* Bar Fill */}
               {d.count > 0 && (
-                <div style={{
-                  width: "100%",
-                  height: `${barHeightPct}%`,
-                  background: "var(--foreground)",
-                  opacity: 0.85,
-                  borderRadius: "6px",
-                }} />
+                <div 
+                  className="w-full bg-foreground opacity-85 rounded-md"
+                  style={{ height: `${barHeightPct}%` }}
+                />
               )}
             </div>
 
             {/* Day Label */}
-            <span style={{
-              marginTop: "8px",
-              fontSize: "11px",
-              color: "var(--muted-foreground)",
-              fontFamily: "var(--font-sans)",
-            }}>
+            <span className="mt-2 text-[11px] text-muted-foreground font-sans">
               {d.label}
             </span>
           </div>
@@ -177,55 +140,29 @@ function StatCard({
 }) {
   const trendColor =
     trend?.dir === "up"
-      ? "#4ade80"
+      ? "text-emerald-400"
       : trend?.dir === "down"
-        ? "var(--destructive)"
-        : "var(--muted-foreground)";
+        ? "text-destructive"
+        : "text-muted-foreground";
   const trendIcon =
     trend?.dir === "up" ? "▲" : trend?.dir === "down" ? "▼" : "—";
 
   return (
-    <div
-      style={{
-        background: "var(--card)",
-        border: "1px solid var(--border)",
-        borderRadius: "12px",
-        padding: "24px",
-        flex: "1",
-        minWidth: "0",
-      }}
-    >
-      <p
-        style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "0.08em",
-          color: "var(--muted-foreground)",
-          textTransform: "uppercase",
-          margin: "0 0 12px",
-        }}
-      >
+    <div className="bg-card border border-border rounded-xl p-5 sm:p-6 flex-grow flex-shrink basis-0 min-w-0">
+      <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase mb-3">
         {label}
       </p>
-      <p
-        style={{
-          fontSize: "40px",
-          fontWeight: 700,
-          color: "var(--foreground)",
-          margin: "0 0 6px",
-          lineHeight: 1,
-        }}
-      >
+      <p className="text-3xl sm:text-4xl font-bold text-foreground mb-1.5 leading-none">
         {value}
       </p>
-      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      <div className="flex items-center gap-1.5 flex-wrap">
         {trend && (
-          <span style={{ fontSize: "12px", fontWeight: 600, color: trendColor }}>
+          <span className={`text-xs font-semibold ${trendColor}`}>
             {trendIcon} {trend.pct}%
           </span>
         )}
         {sub && (
-          <span style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>
+          <span className="text-xs text-muted-foreground">
             {sub}
           </span>
         )}
@@ -309,79 +246,33 @@ export default function Dashboard() {
   const isCurrentWeek = weekOffset === 0;
 
   return (
-    <div style={{ padding: "40px 40px 80px", maxWidth: "1100px" }}>
+    <div className="p-4 sm:p-10 pb-24 max-w-[1100px] w-full mx-auto font-sans">
       {/* ── Header ── */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          marginBottom: "40px",
-          gap: "16px",
-          flexWrap: "wrap",
-        }}
-      >
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-8 sm:mb-10 gap-6">
         <div>
-          <p
-            style={{
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "var(--muted-foreground)",
-              margin: "0 0 6px",
-            }}
-          >
+          <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase mb-1.5">
             Weekly Report
           </p>
-          <h1
-            style={{
-              fontSize: "28px",
-              fontWeight: 700,
-              color: "var(--foreground)",
-              margin: 0,
-            }}
-          >
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
             {isCurrentWeek ? "This Week" : weekLabel}
           </h1>
-          <p style={{ fontSize: "13px", color: "var(--muted-foreground)", margin: "4px 0 0" }}>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             {isCurrentWeek ? weekLabel : `Week of ${weekLabel}`}
           </p>
         </div>
 
         {/* Week navigator */}
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             onClick={() => setWeekOffset((o) => o - 1)}
-            style={{
-              background: "var(--muted)",
-              border: "1px solid var(--border)",
-              borderRadius: "8px",
-              padding: "8px 14px",
-              fontSize: "13px",
-              color: "var(--foreground)",
-              cursor: "pointer",
-              fontFamily: "var(--font-sans)",
-              transition: "background 0.15s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "var(--accent)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "var(--muted)")}
+            className="bg-muted border border-border rounded-lg px-3.5 py-2 text-xs sm:text-sm text-foreground cursor-pointer transition-colors duration-150 hover:bg-accent font-sans"
           >
             ← Prev
           </button>
           {!isCurrentWeek && (
             <button
               onClick={() => setWeekOffset(0)}
-              style={{
-                background: "transparent",
-                border: "1px solid var(--border)",
-                borderRadius: "8px",
-                padding: "8px 14px",
-                fontSize: "13px",
-                color: "var(--muted-foreground)",
-                cursor: "pointer",
-                fontFamily: "var(--font-sans)",
-              }}
+              className="bg-transparent border border-border rounded-lg px-3.5 py-2 text-xs sm:text-sm text-muted-foreground cursor-pointer transition-colors duration-150 hover:text-foreground hover:bg-muted font-sans"
             >
               Today
             </button>
@@ -389,22 +280,11 @@ export default function Dashboard() {
           <button
             onClick={() => setWeekOffset((o) => Math.min(o + 1, 0))}
             disabled={isCurrentWeek}
-            style={{
-              background: "var(--muted)",
-              border: "1px solid var(--border)",
-              borderRadius: "8px",
-              padding: "8px 14px",
-              fontSize: "13px",
-              color: isCurrentWeek ? "var(--muted-foreground)" : "var(--foreground)",
-              cursor: isCurrentWeek ? "not-allowed" : "pointer",
-              fontFamily: "var(--font-sans)",
-              opacity: isCurrentWeek ? 0.4 : 1,
-              transition: "background 0.15s",
-            }}
-            onMouseEnter={(e) => {
-              if (!isCurrentWeek) e.currentTarget.style.background = "var(--accent)";
-            }}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "var(--muted)")}
+            className={`border border-border rounded-lg px-3.5 py-2 text-xs sm:text-sm font-sans transition-colors duration-150 ${
+              isCurrentWeek
+                ? "bg-muted/40 text-muted-foreground cursor-not-allowed opacity-40"
+                : "bg-muted text-foreground cursor-pointer hover:bg-accent"
+            }`}
           >
             Next →
           </button>
@@ -412,58 +292,22 @@ export default function Dashboard() {
       </div>
 
       {error ? (
-        <div
-          style={{
-            background: "var(--card)",
-            border: "1px solid var(--destructive)",
-            borderRadius: "12px",
-            padding: "48px 24px",
-            textAlign: "center",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "16px",
-            boxShadow: "0 4px 12px rgba(239, 68, 68, 0.05)",
-          }}
-        >
+        <div className="bg-card border border-destructive rounded-xl p-8 sm:p-12 text-center flex flex-col items-center justify-center gap-4 shadow-sm">
           {/* Error Icon */}
-          <div style={{
-            width: "48px",
-            height: "48px",
-            borderRadius: "50%",
-            background: "rgba(239, 68, 68, 0.1)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "var(--destructive)",
-          }}>
+          <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           </div>
           <div>
-            <h3 style={{ fontSize: "16px", fontWeight: 600, color: "var(--foreground)", margin: "0 0 6px" }}>
+            <h3 className="text-base font-semibold text-foreground mb-1.5">
               Unable to load Dashboard Data
             </h3>
-            <p style={{ fontSize: "13px", color: "var(--muted-foreground)", margin: 0 }}>
+            <p className="text-xs sm:text-sm text-muted-foreground">
               {error}
             </p>
           </div>
           <button
             onClick={fetchData}
-            style={{
-              background: "var(--foreground)",
-              color: "var(--background)",
-              border: "none",
-              borderRadius: "8px",
-              padding: "10px 20px",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-              fontFamily: "var(--font-sans)",
-              transition: "opacity 0.15s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+            className="bg-foreground text-background border-none rounded-lg px-5 py-2.5 text-xs sm:text-sm font-semibold cursor-pointer transition-opacity duration-150 hover:opacity-90 font-sans"
           >
             Retry Connection
           </button>
@@ -471,7 +315,7 @@ export default function Dashboard() {
       ) : (
         <>
           {/* ── Stat cards ── */}
-          <div style={{ display: "flex", gap: "16px", marginBottom: "32px", flexWrap: "wrap" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <StatCard
               label="This Week"
               value={loading ? "—" : thisCount}
@@ -491,28 +335,13 @@ export default function Dashboard() {
           </div>
 
           {/* ── Bar chart ── */}
-          <div
-            style={{
-              background: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "12px",
-              padding: "28px 28px 20px",
-              marginBottom: "24px",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "13px",
-                fontWeight: 600,
-                color: "var(--foreground)",
-                margin: "0 0 44px",
-              }}
-            >
+          <div className="bg-card border border-border rounded-xl p-5 sm:p-7 pb-5 mb-6">
+            <p className="text-sm font-semibold text-foreground mb-10">
               Daily Activity
             </p>
             {loading ? (
-              <div style={{ height: "148px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: "13px", color: "var(--muted-foreground)" }}>Loading…</span>
+              <div className="h-[148px] flex items-center justify-center">
+                <span className="text-xs sm:text-sm text-muted-foreground">Loading…</span>
               </div>
             ) : (
               <BarChart data={chartData} />
@@ -520,60 +349,21 @@ export default function Dashboard() {
           </div>
 
           {/* ── This week's leads ── */}
-          <div
-            style={{
-              background: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "12px",
-              overflow: "hidden",
-            }}
-          >
+          <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
             {/* Table header */}
-            <div
-              style={{
-                padding: "20px 24px",
-                borderBottom: "1px solid var(--border)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "12px",
-                flexWrap: "wrap",
-              }}
-            >
+            <div className="p-5 sm:px-6 border-b border-border flex items-center justify-between gap-4 flex-wrap">
               <div>
-                <h2 style={{ fontSize: "14px", fontWeight: 600, color: "var(--foreground)", margin: "0 0 2px" }}>
+                <h2 className="text-sm font-semibold text-foreground mb-0.5">
                   {isCurrentWeek ? "This Week's Leads" : "Week's Leads"}
                 </h2>
-                <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: 0 }}>
+                <p className="text-xs text-muted-foreground">
                   {loading ? "Loading…" : `${thisCount} contact${thisCount !== 1 ? "s" : ""}`}
                 </p>
               </div>
               {thisCount > 0 && (
                 <button
                   onClick={() => exportCSV(thisWeekLeads, weekLabel)}
-                  style={{
-                    background: "transparent",
-                    border: "1px solid var(--border)",
-                    borderRadius: "8px",
-                    padding: "7px 14px",
-                    fontSize: "12px",
-                    fontWeight: 500,
-                    color: "var(--foreground)",
-                    cursor: "pointer",
-                    fontFamily: "var(--font-sans)",
-                    transition: "background 0.15s, border-color 0.15s",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "var(--muted)";
-                    e.currentTarget.style.borderColor = "var(--ring)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent";
-                    e.currentTarget.style.borderColor = "var(--border)";
-                  }}
+                  className="bg-transparent border border-border rounded-lg px-3.5 py-1.5 text-xs font-semibold text-foreground cursor-pointer transition-colors duration-150 hover:bg-muted hover:border-ring flex items-center gap-1.5 font-sans"
                 >
                   ↓ Export CSV
                 </button>
@@ -582,15 +372,15 @@ export default function Dashboard() {
 
             {/* Leads list */}
             {loading ? (
-              <div style={{ padding: "48px 24px", textAlign: "center", color: "var(--muted-foreground)", fontSize: "13px" }}>
+              <div className="p-12 text-center text-muted-foreground text-xs sm:text-sm">
                 Loading leads…
               </div>
             ) : thisWeekLeads.length === 0 ? (
-              <div style={{ padding: "56px 24px", textAlign: "center" }}>
-                <p style={{ fontSize: "15px", fontWeight: 500, color: "var(--foreground)", margin: "0 0 6px" }}>
+              <div className="p-14 text-center">
+                <p className="text-sm sm:text-base font-semibold text-foreground mb-1.5">
                   No leads this week
                 </p>
-                <p style={{ fontSize: "13px", color: "var(--muted-foreground)", margin: 0 }}>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {isCurrentWeek
                     ? "New leads will appear here as they come in."
                     : "No leads were captured during this week."}
@@ -601,75 +391,39 @@ export default function Dashboard() {
                 {thisWeekLeads.map((c, i) => (
                   <div
                     key={c._id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "16px",
-                      padding: "14px 24px",
-                      borderBottom: i < thisWeekLeads.length - 1 ? "1px solid var(--border)" : "none",
-                      transition: "background 0.1s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--muted)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    className={`flex items-start sm:items-center gap-3 sm:gap-4 p-4 sm:px-6 transition-colors duration-100 ${
+                      i < thisWeekLeads.length - 1 ? "border-b border-border" : ""
+                    } hover:bg-muted`}
                   >
                     {/* Avatar */}
-                    <div
-                      style={{
-                        width: "34px",
-                        height: "34px",
-                        borderRadius: "50%",
-                        background: "var(--muted)",
-                        border: "1px solid var(--border)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "13px",
-                        fontWeight: 600,
-                        color: "var(--foreground)",
-                        flexShrink: 0,
-                      }}
-                    >
+                    <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center text-xs sm:text-sm font-semibold text-foreground flex-shrink-0">
                       {(c.name || c.email || "?")[0].toUpperCase()}
                     </div>
 
-                    {/* Name + email */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--foreground)", margin: "0 0 2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {c.name || "Unknown"}
-                      </p>
-                      <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {c.email}
-                      </p>
+                    {/* Content Group */}
+                    <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+                      {/* Name + email */}
+                      <div className="min-w-0">
+                        <p className="text-xs sm:text-sm font-medium text-foreground truncate">
+                          {c.name || "Unknown"}
+                        </p>
+                        <p className="text-[11px] sm:text-xs text-muted-foreground truncate">
+                          {c.email}
+                        </p>
+                      </div>
+
+                      {/* Company & Date */}
+                      <div className="flex items-center gap-3 flex-wrap">
+                        {c.company && (
+                          <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground bg-muted border border-border rounded px-2 py-0.5 whitespace-nowrap">
+                            {c.company}
+                          </span>
+                        )}
+                        <span className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-nowrap">
+                          {formatDateFull(c.createdAt)}
+                        </span>
+                      </div>
                     </div>
-
-                    {/* Company */}
-                    {c.company && (
-                      <span style={{
-                        fontSize: "11px",
-                        fontWeight: 500,
-                        color: "var(--muted-foreground)",
-                        background: "var(--muted)",
-                        border: "1px solid var(--border)",
-                        borderRadius: "4px",
-                        padding: "3px 8px",
-                        whiteSpace: "nowrap",
-                        flexShrink: 0,
-                      }}>
-                        {c.company}
-                      </span>
-                    )}
-
-                    {/* Date */}
-                    <span style={{
-                      fontSize: "11px",
-                      color: "var(--muted-foreground)",
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                      marginLeft: "auto",
-                      paddingLeft: "16px",
-                    }}>
-                      {formatDateFull(c.createdAt)}
-                    </span>
                   </div>
                 ))}
               </div>

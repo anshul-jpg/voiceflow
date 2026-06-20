@@ -148,6 +148,13 @@ body {
   body { cursor: auto; }
 }
 
+@media (hover: none), (pointer: coarse) {
+  .magnetic-cursor {
+    display: none !important;
+    pointer-events: none !important;
+  }
+}
+
 ::selection {
   background: rgba(115, 115, 115, 0.2);
   color: var(--foreground);

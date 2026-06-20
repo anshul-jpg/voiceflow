@@ -42,158 +42,96 @@ export default function Login() {
 
   return (
     <MagneticCursor magneticFactor={0.3} cursorSize={28} blendMode="exclusion">
-      <div style={{
-        minHeight: "100vh",
-        background: "var(--background)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
-        fontFamily: "var(--font-sans)",
-      }}>
-      {/* Background glow */}
-      <div style={{
-        position: "fixed",
-        top: 0, left: 0, right: 0, bottom: 0,
-        background: "radial-gradient(ellipse 60% 50% at 50% -10%, rgba(115,115,115,0.12) 0%, transparent 70%)",
-        pointerEvents: "none",
-      }} />
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-x-hidden">
+        {/* Background glow */}
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,rgba(115,115,115,0.12)_0%,transparent_70%)] pointer-events-none" />
 
-      <div style={{ width: "100%", maxWidth: "440px", position: "relative" }}>
-        {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: "40px" }}>
-          <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-            <Image src="/logo.svg" alt="Voxora" width={28} height={28} />
-            <span style={{ fontSize: "20px", fontWeight: 600, color: "var(--foreground)" }}>Voxora</span>
-          </Link>
-        </div>
+        <div className="w-full max-w-[440px] relative z-10">
+          {/* Logo */}
+          <div className="text-center mb-8 sm:mb-10">
+            <Link href="/" className="inline-flex items-center gap-2.5 no-underline">
+              <Image src="/logo.svg" alt="Voxora" width={28} height={28} />
+              <span className="text-xl font-semibold text-foreground">Voxora</span>
+            </Link>
+          </div>
 
-        {/* Card */}
-        <div style={{
-          background: "var(--card)",
-          border: "1px solid var(--border)",
-          borderRadius: "16px",
-          padding: "40px",
-        }}>
-          <h1 style={{ fontSize: "24px", fontWeight: 700, color: "var(--foreground)", margin: "0 0 8px" }}>
-            Welcome back
-          </h1>
-          <p style={{ fontSize: "14px", color: "var(--muted-foreground)", margin: "0 0 32px" }}>
-            Sign in to your Voxora dashboard
-          </p>
+          {/* Card */}
+          <div className="bg-card border border-border rounded-2xl p-6 sm:p-10 shadow-xl">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
+              Welcome back
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-8">
+              Sign in to your Voxora dashboard
+            </p>
 
-          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {/* Email */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <label style={{ fontSize: "13px", fontWeight: 500, color: "var(--foreground)" }}>
-                Email
-              </label>
-              <input
-                id="login-email"
-                type="email"
-                placeholder="you@company.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{
-                  background: "var(--muted)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "8px",
-                  padding: "12px 16px",
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                  fontFamily: "var(--font-sans)",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "var(--ring)")}
-                onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
-              />
-            </div>
-
-            {/* Password */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label style={{ fontSize: "13px", fontWeight: 500, color: "var(--foreground)" }}>
-                  Password
+            <form onSubmit={handleLogin} className="flex flex-col gap-5">
+              {/* Email */}
+              <div className="flex flex-col gap-2">
+                <label className="text-[13px] font-medium text-foreground">
+                  Email
                 </label>
-                <Link href="/forgot-password" style={{ fontSize: "12px", color: "var(--muted-foreground)", textDecoration: "none" }}>
-                  Forgot password?
-                </Link>
+                <input
+                  id="login-email"
+                  type="email"
+                  placeholder="you@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-muted border border-border rounded-lg px-4 py-3 text-foreground text-sm outline-none transition-colors duration-200 focus:border-ring font-sans w-full"
+                />
               </div>
-              <input
-                id="login-password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{
-                  background: "var(--muted)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "8px",
-                  padding: "12px 16px",
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                  fontFamily: "var(--font-sans)",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "var(--ring)")}
-                onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
-              />
-            </div>
 
-            {/* Error */}
-            {error && (
-              <div style={{
-                background: "rgba(255,100,103,0.08)",
-                border: "1px solid rgba(255,100,103,0.25)",
-                borderRadius: "8px",
-                padding: "10px 14px",
-                fontSize: "13px",
-                color: "var(--destructive)",
-              }}>
-                {error}
+              {/* Password */}
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-[13px] font-medium text-foreground">
+                    Password
+                  </label>
+                  <Link href="/forgot-password" className="text-xs text-muted-foreground no-underline hover:text-foreground transition-colors">
+                    Forgot password?
+                  </Link>
+                </div>
+                <input
+                  id="login-password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-muted border border-border rounded-lg px-4 py-3 text-foreground text-sm outline-none transition-colors duration-200 focus:border-ring font-sans w-full"
+                />
               </div>
-            )}
 
-            {/* Submit */}
-            <button
-              id="login-submit"
-              type="submit"
-              disabled={loading}
-              style={{
-                background: loading ? "var(--muted)" : "var(--foreground)",
-                color: loading ? "var(--muted-foreground)" : "var(--background)",
-                border: "none",
-                borderRadius: "8px",
-                padding: "13px 24px",
-                fontSize: "14px",
-                fontWeight: 600,
-                cursor: loading ? "not-allowed" : "pointer",
-                transition: "opacity 0.2s",
-                fontFamily: "var(--font-sans)",
-                letterSpacing: "0.01em",
-              }}
-            >
-              {loading ? "Signing in…" : "Sign in"}
-            </button>
-          </form>
+              {/* Error */}
+              {error && (
+                <div className="bg-destructive/10 border border-destructive/25 rounded-lg px-3.5 py-2.5 text-[13px] text-destructive">
+                  {error}
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                id="login-submit"
+                type="submit"
+                disabled={loading}
+                className={`border-none rounded-lg px-6 py-3.5 text-sm font-semibold cursor-pointer transition-opacity duration-200 font-sans tracking-wide ${
+                  loading
+                    ? "bg-muted text-muted-foreground cursor-not-allowed"
+                    : "bg-foreground text-background hover:opacity-90"
+                }`}
+              >
+                {loading ? "Signing in…" : "Sign in"}
+              </button>
+            </form>
+          </div>
+
+          {/* Footer link */}
+          <p className="text-center mt-6 text-sm text-muted-foreground">
+            Don&apos;t have an account?{" "}
+            <Link href="/signup" className="text-foreground font-medium no-underline hover:underline">
+              Sign up
+            </Link>
+          </p>
         </div>
-
-        {/* Footer link */}
-        <p style={{
-          textAlign: "center",
-          marginTop: "24px",
-          fontSize: "14px",
-          color: "var(--muted-foreground)",
-        }}>
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" style={{ color: "var(--foreground)", fontWeight: 500, textDecoration: "none" }}>
-            Sign up
-          </Link>
-        </p>
       </div>
-    </div>
     </MagneticCursor>
   );
 }
