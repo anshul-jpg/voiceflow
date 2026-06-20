@@ -29,11 +29,18 @@ if (process.env.NODE_ENV === 'development') {
   clientPromise = client.connect();
 }
 
-// Global caching for mongoose to prevent multiple connections in development HMR
-let cached = (global as any).mongoose;
+declare global {
+  var mongoose: {
+    conn: typeof import('mongoose') | null;
+    promise: Promise<typeof import('mongoose')> | null;
+  } | undefined;
+}
 
-if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+// Global caching for mongoose to prevent multiple connections in development HMR
+let cached = global.mongoose || { conn: null, promise: null };
+
+if (!global.mongoose) {
+  global.mongoose = cached;
 }
 
 export async function connectDB() {
