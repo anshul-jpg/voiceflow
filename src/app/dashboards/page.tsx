@@ -45,18 +45,32 @@ function getDayLabel(d: Date) {
 
 // ─── CSV export ──────────────────────────────────────────────────────────────
 
+function sanitizeCSVField(value: string) {
+  let val = (value ?? "").trim();
+  // CSV Injection prevention (Formula Injection)
+  // If the field starts with =, +, -, @, prefix it with a single quote '
+  if (/^[=\+\-@]/.test(val)) {
+    val = `'${val}`;
+  }
+  // Standard CSV escaping: wrap in quotes if it contains separator, quote, or newline
+  if (val.includes(',') || val.includes('"') || val.includes('\n') || val.includes('\r')) {
+    val = `"${val.replace(/"/g, '""')}"`;
+  }
+  return val;
+}
+
 function exportCSV(contacts: Contact[], weekLabel: string) {
   const header = ["Name", "Email", "Company", "Phone", "Message", "Date"];
   const rows = contacts.map((c) => [
-    c.name ?? "",
-    c.email ?? "",
-    c.company ?? "",
-    c.phone ?? "",
-    (c.message ?? "").replace(/,/g, ";"),
-    formatDateFull(c.createdAt),
+    sanitizeCSVField(c.name),
+    sanitizeCSVField(c.email),
+    sanitizeCSVField(c.company ?? ""),
+    sanitizeCSVField(c.phone ?? ""),
+    sanitizeCSVField(c.message ?? ""),
+    sanitizeCSVField(formatDateFull(c.createdAt)),
   ]);
   const csv = [header, ...rows].map((r) => r.join(",")).join("\n");
-  const blob = new Blob([csv], { type: "text/csv" });
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -225,20 +239,30 @@ function StatCard({
 export default function Dashboard() {
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch("/api/dashboard/contacts", { credentials: "include" });
-        const data = await res.json();
-        setAllContacts(data.contacts ?? []);
-      } finally {
-        setLoading(false);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/dashboard/contacts", { credentials: "include" });
+      if (!res.ok) {
+        throw new Error(`Failed to load data (Status ${res.status})`);
       }
+      const data = await res.json();
+      setAllContacts(data.contacts ?? []);
+    } catch (err: any) {
+      console.error("Dashboard fetch error:", err);
+      setError(err?.message || "An unexpected error occurred while loading dashboard data.");
+    } finally {
+      setLoading(false);
     }
-    fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const { start, end } = getWeekBounds(weekOffset);
   const prevWeek = getWeekBounds(weekOffset - 1);
@@ -387,211 +411,272 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── Stat cards ── */}
-      <div style={{ display: "flex", gap: "16px", marginBottom: "32px", flexWrap: "wrap" }}>
-        <StatCard
-          label="This Week"
-          value={loading ? "—" : thisCount}
-          trend={loading ? undefined : { dir: trendDir, pct: Math.abs(trendPct) }}
-          sub="vs last week"
-        />
-        <StatCard
-          label="Last Week"
-          value={loading ? "—" : lastCount}
-          sub="leads captured"
-        />
-        <StatCard
-          label="All Time"
-          value={loading ? "—" : allContacts.length}
-          sub="total leads"
-        />
-      </div>
-
-      {/* ── Bar chart ── */}
-      <div
-        style={{
-          background: "var(--card)",
-          border: "1px solid var(--border)",
-          borderRadius: "12px",
-          padding: "28px 28px 20px",
-          marginBottom: "24px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "13px",
-            fontWeight: 600,
-            color: "var(--foreground)",
-            margin: "0 0 44px",
-          }}
-        >
-          Daily Activity
-        </p>
-        {loading ? (
-          <div style={{ height: "148px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontSize: "13px", color: "var(--muted-foreground)" }}>Loading…</span>
-          </div>
-        ) : (
-          <BarChart data={chartData} />
-        )}
-      </div>
-
-      {/* ── This week's leads ── */}
-      <div
-        style={{
-          background: "var(--card)",
-          border: "1px solid var(--border)",
-          borderRadius: "12px",
-          overflow: "hidden",
-        }}
-      >
-        {/* Table header */}
+      {error ? (
         <div
           style={{
-            padding: "20px 24px",
-            borderBottom: "1px solid var(--border)",
+            background: "var(--card)",
+            border: "1px solid var(--destructive)",
+            borderRadius: "12px",
+            padding: "48px 24px",
+            textAlign: "center",
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
-            justifyContent: "space-between",
-            gap: "12px",
-            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: "16px",
+            boxShadow: "0 4px 12px rgba(239, 68, 68, 0.05)",
           }}
         >
+          {/* Error Icon */}
+          <div style={{
+            width: "48px",
+            height: "48px",
+            borderRadius: "50%",
+            background: "rgba(239, 68, 68, 0.1)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--destructive)",
+          }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
           <div>
-            <h2 style={{ fontSize: "14px", fontWeight: 600, color: "var(--foreground)", margin: "0 0 2px" }}>
-              {isCurrentWeek ? "This Week's Leads" : "Week's Leads"}
-            </h2>
-            <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: 0 }}>
-              {loading ? "Loading…" : `${thisCount} contact${thisCount !== 1 ? "s" : ""}`}
+            <h3 style={{ fontSize: "16px", fontWeight: 600, color: "var(--foreground)", margin: "0 0 6px" }}>
+              Unable to load Dashboard Data
+            </h3>
+            <p style={{ fontSize: "13px", color: "var(--muted-foreground)", margin: 0 }}>
+              {error}
             </p>
           </div>
-          {thisCount > 0 && (
-            <button
-              onClick={() => exportCSV(thisWeekLeads, weekLabel)}
+          <button
+            onClick={fetchData}
+            style={{
+              background: "var(--foreground)",
+              color: "var(--background)",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              fontSize: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+              fontFamily: "var(--font-sans)",
+              transition: "opacity 0.15s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+          >
+            Retry Connection
+          </button>
+        </div>
+      ) : (
+        <>
+          {/* ── Stat cards ── */}
+          <div style={{ display: "flex", gap: "16px", marginBottom: "32px", flexWrap: "wrap" }}>
+            <StatCard
+              label="This Week"
+              value={loading ? "—" : thisCount}
+              trend={loading ? undefined : { dir: trendDir, pct: Math.abs(trendPct) }}
+              sub="vs last week"
+            />
+            <StatCard
+              label="Last Week"
+              value={loading ? "—" : lastCount}
+              sub="leads captured"
+            />
+            <StatCard
+              label="All Time"
+              value={loading ? "—" : allContacts.length}
+              sub="total leads"
+            />
+          </div>
+
+          {/* ── Bar chart ── */}
+          <div
+            style={{
+              background: "var(--card)",
+              border: "1px solid var(--border)",
+              borderRadius: "12px",
+              padding: "28px 28px 20px",
+              marginBottom: "24px",
+            }}
+          >
+            <p
               style={{
-                background: "transparent",
-                border: "1px solid var(--border)",
-                borderRadius: "8px",
-                padding: "7px 14px",
-                fontSize: "12px",
-                fontWeight: 500,
+                fontSize: "13px",
+                fontWeight: 600,
                 color: "var(--foreground)",
-                cursor: "pointer",
-                fontFamily: "var(--font-sans)",
-                transition: "background 0.15s, border-color 0.15s",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "var(--muted)";
-                e.currentTarget.style.borderColor = "var(--ring)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.borderColor = "var(--border)";
+                margin: "0 0 44px",
               }}
             >
-              ↓ Export CSV
-            </button>
-          )}
-        </div>
+              Daily Activity
+            </p>
+            {loading ? (
+              <div style={{ height: "148px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: "13px", color: "var(--muted-foreground)" }}>Loading…</span>
+              </div>
+            ) : (
+              <BarChart data={chartData} />
+            )}
+          </div>
 
-        {/* Leads list */}
-        {loading ? (
-          <div style={{ padding: "48px 24px", textAlign: "center", color: "var(--muted-foreground)", fontSize: "13px" }}>
-            Loading leads…
-          </div>
-        ) : thisWeekLeads.length === 0 ? (
-          <div style={{ padding: "56px 24px", textAlign: "center" }}>
-            <p style={{ fontSize: "15px", fontWeight: 500, color: "var(--foreground)", margin: "0 0 6px" }}>
-              No leads this week
-            </p>
-            <p style={{ fontSize: "13px", color: "var(--muted-foreground)", margin: 0 }}>
-              {isCurrentWeek
-                ? "New leads will appear here as they come in."
-                : "No leads were captured during this week."}
-            </p>
-          </div>
-        ) : (
-          <div>
-            {thisWeekLeads.map((c, i) => (
-              <div
-                key={c._id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "16px",
-                  padding: "14px 24px",
-                  borderBottom: i < thisWeekLeads.length - 1 ? "1px solid var(--border)" : "none",
-                  transition: "background 0.1s",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--muted)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                {/* Avatar */}
-                <div
+          {/* ── This week's leads ── */}
+          <div
+            style={{
+              background: "var(--card)",
+              border: "1px solid var(--border)",
+              borderRadius: "12px",
+              overflow: "hidden",
+            }}
+          >
+            {/* Table header */}
+            <div
+              style={{
+                padding: "20px 24px",
+                borderBottom: "1px solid var(--border)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "12px",
+                flexWrap: "wrap",
+              }}
+            >
+              <div>
+                <h2 style={{ fontSize: "14px", fontWeight: 600, color: "var(--foreground)", margin: "0 0 2px" }}>
+                  {isCurrentWeek ? "This Week's Leads" : "Week's Leads"}
+                </h2>
+                <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: 0 }}>
+                  {loading ? "Loading…" : `${thisCount} contact${thisCount !== 1 ? "s" : ""}`}
+                </p>
+              </div>
+              {thisCount > 0 && (
+                <button
+                  onClick={() => exportCSV(thisWeekLeads, weekLabel)}
                   style={{
-                    width: "34px",
-                    height: "34px",
-                    borderRadius: "50%",
-                    background: "var(--muted)",
+                    background: "transparent",
                     border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "7px 14px",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    color: "var(--foreground)",
+                    cursor: "pointer",
+                    fontFamily: "var(--font-sans)",
+                    transition: "background 0.15s, border-color 0.15s",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    color: "var(--foreground)",
-                    flexShrink: 0,
+                    gap: "6px",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "var(--muted)";
+                    e.currentTarget.style.borderColor = "var(--ring)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.borderColor = "var(--border)";
                   }}
                 >
-                  {(c.name || c.email || "?")[0].toUpperCase()}
-                </div>
+                  ↓ Export CSV
+                </button>
+              )}
+            </div>
 
-                {/* Name + email */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--foreground)", margin: "0 0 2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {c.name || "Unknown"}
-                  </p>
-                  <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {c.email}
-                  </p>
-                </div>
-
-                {/* Company */}
-                {c.company && (
-                  <span style={{
-                    fontSize: "11px",
-                    fontWeight: 500,
-                    color: "var(--muted-foreground)",
-                    background: "var(--muted)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "4px",
-                    padding: "3px 8px",
-                    whiteSpace: "nowrap",
-                    flexShrink: 0,
-                  }}>
-                    {c.company}
-                  </span>
-                )}
-
-                {/* Date */}
-                <span style={{
-                  fontSize: "11px",
-                  color: "var(--muted-foreground)",
-                  whiteSpace: "nowrap",
-                  flexShrink: 0,
-                  marginLeft: "auto",
-                  paddingLeft: "16px",
-                }}>
-                  {formatDateFull(c.createdAt)}
-                </span>
+            {/* Leads list */}
+            {loading ? (
+              <div style={{ padding: "48px 24px", textAlign: "center", color: "var(--muted-foreground)", fontSize: "13px" }}>
+                Loading leads…
               </div>
-            ))}
+            ) : thisWeekLeads.length === 0 ? (
+              <div style={{ padding: "56px 24px", textAlign: "center" }}>
+                <p style={{ fontSize: "15px", fontWeight: 500, color: "var(--foreground)", margin: "0 0 6px" }}>
+                  No leads this week
+                </p>
+                <p style={{ fontSize: "13px", color: "var(--muted-foreground)", margin: 0 }}>
+                  {isCurrentWeek
+                    ? "New leads will appear here as they come in."
+                    : "No leads were captured during this week."}
+                </p>
+              </div>
+            ) : (
+              <div>
+                {thisWeekLeads.map((c, i) => (
+                  <div
+                    key={c._id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "16px",
+                      padding: "14px 24px",
+                      borderBottom: i < thisWeekLeads.length - 1 ? "1px solid var(--border)" : "none",
+                      transition: "background 0.1s",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--muted)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  >
+                    {/* Avatar */}
+                    <div
+                      style={{
+                        width: "34px",
+                        height: "34px",
+                        borderRadius: "50%",
+                        background: "var(--muted)",
+                        border: "1px solid var(--border)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        color: "var(--foreground)",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {(c.name || c.email || "?")[0].toUpperCase()}
+                    </div>
+
+                    {/* Name + email */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--foreground)", margin: "0 0 2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {c.name || "Unknown"}
+                      </p>
+                      <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {c.email}
+                      </p>
+                    </div>
+
+                    {/* Company */}
+                    {c.company && (
+                      <span style={{
+                        fontSize: "11px",
+                        fontWeight: 500,
+                        color: "var(--muted-foreground)",
+                        background: "var(--muted)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "4px",
+                        padding: "3px 8px",
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                      }}>
+                        {c.company}
+                      </span>
+                    )}
+
+                    {/* Date */}
+                    <span style={{
+                      fontSize: "11px",
+                      color: "var(--muted-foreground)",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                      marginLeft: "auto",
+                      paddingLeft: "16px",
+                    }}>
+                      {formatDateFull(c.createdAt)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 }
