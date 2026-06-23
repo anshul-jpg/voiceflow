@@ -20,7 +20,7 @@ const PRICING_PLANS = [
       "Call summaries",
     ],
     buttonText: "Get Started",
-    href: "#contact",
+    href: "/#contact",
     isPopular: false,
   },
   {
@@ -40,7 +40,7 @@ const PRICING_PLANS = [
       "Priority Support",
     ],
     buttonText: "Book Demo",
-    href: "#contact",
+    href: "/#contact",
     isPopular: true,
   },
   {
@@ -59,7 +59,7 @@ const PRICING_PLANS = [
       "White-glove onboarding",
     ],
     buttonText: "Contact Sales",
-    href: "#contact",
+    href: "/#contact",
     isPopular: false,
   },
 ];
